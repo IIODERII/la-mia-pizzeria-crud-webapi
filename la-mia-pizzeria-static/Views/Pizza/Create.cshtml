@@ -1,0 +1,55 @@
+﻿@model PizzaFormModel
+<body style="background-color: #fff3cd">
+    <div class="text-center container my-5 rounded-3 shadow-lg" style="background-color: #f8d7da">
+        <a class="text-black fs-1 w-100 d-block pt-4 ms-3 text-start" href="/"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Aggiungi i dati della nuova pizza</h1>
+        <div class="text-center container rounded-3 d-flex justify-content-center align-items-center" style=" min-height: 70vh">
+
+            <form asp-controller="Pizza" asp-action="Create" method="post" class="w-100 px-4">
+                @Html.AntiForgeryToken()
+                <div class="py-3">
+                    <strong>Nome:</strong>
+                    <input type="text" asp-for="Pizza.Name" class="d-block w-75 mx-auto form-control" />
+                    <span asp-validation-for="Pizza.Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Descrizione:</strong>
+                    <textarea asp-for="Pizza.Description" class="d-block w-75 mx-auto form-control"></textarea>
+                    <span asp-validation-for="Pizza.Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Prezzo:</strong>
+                    <input type="text" asp-for="Pizza.Price" class="d-block w-75 mx-auto form-control" />
+                    <span asp-validation-for="Pizza.Price" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Immagine (inserire la Url):</strong>
+                    <input type="text" asp-for="Pizza.Image" class="d-block w-75 mx-auto form-control" />
+                    <span asp-validation-for="Pizza.Image" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Categoria Pizza:</strong>
+                    <select asp-for="Pizza.TypeId" rows="10" class="d-block w-75 mx-auto form-select">
+                        <option value="@null">Nessuno</option>
+                        @foreach(PizzaType t in Model.Types) {
+                            @if (Model.Pizza.TypeId == t.Id) {
+                            <option value="@t.Id" selected>@t.Name</option>
+                            }
+                            else {
+                               <option value="@t.Id">@t.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Ingredienti:</strong>
+                    <select asp-items="@Model.Ingredients" multiple="multiple" asp-for="SelectedIngredients" size="10" class="d-block w-75 mx-auto form-select"></select>
+                </div>
+                <div class="text-end">
+                    <input type="submit" class="btn btn-small btn-warning mb-3" value="Salva">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,1 @@
+﻿SElect * from Pizza

@@ -1,0 +1,40 @@
+﻿@model Pizza
+
+<body style="background-color: #fff3cd">
+    <div class="text-center container my-5 rounded-3 shadow-lg" style="background-color: #f8d7da">
+        <a class="text-black fs-1 w-100 d-block mt-3 ms-3 text-start" href="/"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1 class="fs-1 pt-5 fw-b text-center pb-3">@Model.Name</h1>
+        <img class="w-75" src="~/img/@Model.Image" alt="@Model.Name" />
+        <p class="text-center pt-3">
+            <span class="badge bg-warning">@Model.Price</span>
+        </p>
+        <p>
+            <strong>Categoria:</strong>
+            @if (Model.Type != null)
+            {
+                @Model.Type.Name
+            }
+            else
+            {
+                <span>Nessuna categoria</span>
+            }
+        </p>
+        <p>
+            <strong>Ingredienti:</strong>
+            @if(Model.Ingredients.Count == 0)
+            {
+                <span>Nessun Ingrediente</span>
+            }
+            else
+            {
+                <ul>
+                    @foreach(Ingredient i in Model.Ingredients)
+                    {
+                        <li>@i.Name</li>
+                    }
+                </ul>
+            }
+        </p>
+        <p class="pb-3">@Model.Description</p>
+    </div>
+</body>

@@ -1,0 +1,88 @@
+﻿<div class="container text-center">
+    <div class="row g-5">
+        <section class="col-4">
+            <h1 class="text-danger">Snack 1</h1>
+
+            @{
+                string nome = "Oder";
+                string cognome = "Risi";
+            }
+            <h2>Io sono @nome @cognome</h2>
+        </section>
+
+        <section class="col-4">
+            <h1 class="text-danger">Snack 2</h1>
+
+            @{
+                int somma(int n)
+                {
+                    int somma = 0;
+                    for(int i = 1; i <= n; i++)
+                    {
+                        somma += i;
+                    }
+                    return somma;
+                }
+            }
+
+            <span>La somma è @somma(5)</span>
+        </section>
+
+        <section class="col-4">
+            <h1 class="text-danger">Snack 3</h1>
+
+            @{
+                string frase = "nel mezzo del cammin di nostra vita";
+                int numA = 0;
+                for(int i = 0; i < frase.Length; i++)
+                {
+                    if (frase[i] == 'a')
+                        numA++;
+                }
+            }
+
+            <p>All'interno della frase: "@frase" ci sono @numA 'a'.</p>
+        </section>
+
+        <section class="col-4">
+            <h1 class="text-danger">Snack 4</h1>
+
+            @{
+                List<int> lista = new List<int>();
+
+                for(int i = 0; i < 20; i++)
+                {
+                    Random rand = new Random();
+                    lista.Add(rand.Next(1, 91));
+                }
+            }
+
+            <p>Nella mia lista i numeri compresi tra 20 e 70 sono:</p>
+            <ul class="text-start w-25 mx-auto">
+                @foreach(int n in lista)
+                {
+                    if(n >= 20 && n <= 70)
+                    {
+                        <li>@n</li>
+                    }
+                }
+            </ul>
+        </section>
+
+        <section class="col-4">
+            <h1 class="text-danger">Snack 5</h1>
+
+            <p>Data di oggi: <span class="text-danger">@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</span></p>
+        </section>
+
+        <section class="col-4">
+            <h1 class="text-danger">Snack 6</h1>
+
+            <ol class="text-start">
+                <li>7 giorni fa era il: <span class="text-danger">@DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss")</span></li>
+                <li>Oggi è <span class="text-danger">@DateTime.Now.ToString("dddd")</span></li>
+                <li>Tra un anno esatto sarà <span class="text-danger">@DateTime.Now.AddYears(1).ToString("dddd")</span></li>
+            </ol>
+        </section>
+    </div>
+</div>
