@@ -1,0 +1,240 @@
+﻿
+<body style="background-color: #fff3cd">
+    <div class="container text-center">
+        <h1>Pizzeria Front-End</h1>
+        
+        <input id="filter" onkeyup="searchFiltered()" class="form-control mb-5 w-75 mx-auto" type="text" placeholder="Cerca..." onchange="filter" />
+        <button onclick="openForm" class="btn btn-primary">Crea Pizza</button>
+        <div class="loading d-flex justify-content-center align-items-ceter" style="min-height : 80vh; margin-top: 10em">
+            <div class="text-center">
+                <i class="fa-solid fa-spinner fa-spin fs-1"></i>
+                <h2>Caricamento...</h2>
+            </div>
+        </div>
+        <div class="error text-center d-none">
+            <h2>Si è verificato un errore</h2>
+            <button  class="mx-auto btn btn-danger" onclick="window.location.reload();">Riprova</button>
+        </div>
+        <div class="row py-3 g-4">
+
+        </div>
+
+        <div class="overlay d-flex justify-content-center align-items-center" style="position: relative; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0;">
+            <div class="show w-50 rounded-3" style="transition: all 0.5s ease; scale: 0; background-color: #fff3cd">
+                <div onclick="closeShow()" class="p-3 text-start" style="cursor: pointer"><i class="fa-solid fa-x"></i></div>
+                <div class="show-content">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="overlay-form d-flex justify-content-center align-items-center" style="position: relative; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0;">
+            <div class="form w-50 rounded-3" style="transition: all 0.5s ease; scale: 0; background-color: #fff3cd">
+                <div onclick="closeForm()" class="p-3 text-start" style="cursor: pointer"><i class="fa-solid fa-x"></i></div>
+                <div>
+                    <form id="pizzaForm">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required><br><br>
+
+                        <label for="description">Description:</label>
+                        <input type="text" id="description" name="description" required><br><br>
+
+                        <label for="image">Image URL:</label>
+                        <input type="text" id="image" name="image" required><br><br>
+
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" name="price" required><br><br>
+
+                        <label for="typeId">Type ID:</label>
+                        <input type="number" id="typeId" name="typeId" required><br><br>
+
+                        <button type="submit">Create Pizza</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        let pizze;
+        const container = document.querySelector(".row");
+        let activeId;
+        let activePizza;
+        const loading = document.querySelector(".loading");
+        axios.get("https://localhost:7091/api/Pizzas/GetAllPizzas").then(res => {
+                pizze = res.data;
+                console.log(pizze);
+                changeCards();
+            }).catch(function (error) {
+                console.log(error)
+                document.querySelector(".error").classList.remove("d-none");
+              })
+              .finally(function () {
+                  loading.classList.add("d-none");
+              });
+            
+            
+
+        function changeCards(){
+            container.innerHTML = "";
+            pizze.forEach((p) =>{
+                const cardContainer = document.createElement('div');
+                    cardContainer.className = 'card-container col-3 px-3';
+                    cardContainer.style.position = 'relative';
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body');
+                    cardBody.style.backgroundColor = "#f8d7da";
+
+                    const cardImage = document.createElement('div');
+                    cardImage.classList.add('card-image');
+                    cardImage.style = 'position: relative; overflow: hidden';
+
+                    const image = document.createElement('img');
+                    image.src = `https://localhost:7091/img/${p.image}`;
+                    image.classList.add("w-100")
+                    image.alt = `${p.name}`;
+
+                    const cardText = document.createElement('div');
+                    cardText.classList.add('card-text');
+
+                    const cardTitle = document.createElement('h3');
+                    cardTitle.classList.add('card-title');
+                    cardTitle.innerHTML = p.name
+
+                    const cardDescription = document.createElement('p');
+                    cardDescription.classList.add('card-description');
+                    cardDescription.innerHTML = p.description.length > 100 ?
+                        `${p.description.substring(0, 100)}...` : `${p.description}`
+
+                    const show = document.createElement('button');
+                    show.className = 'btn btn-success';
+                    show.innerText = 'Mostra';
+                    show.addEventListener("click", function(){
+                        activeId = p.id;
+                        openShow();
+                    });
+
+                    const cardPrice = document.createElement('p');
+                    cardPrice.classList.add('card-price');
+                    cardPrice.innerHTML = `€ ${p.price}`
+
+                    cardText.appendChild(cardTitle);
+                    cardText.appendChild(cardDescription);
+                    cardText.appendChild(cardPrice);
+                    cardText.appendChild(show);
+
+                    cardImage.appendChild(image);
+                    cardBody.appendChild(cardImage);
+                    cardBody.appendChild(cardText);
+
+                    cardContainer.appendChild(cardBody);
+
+                    container.appendChild(cardContainer); 
+            })
+        }
+
+        function openShow(){
+            document.querySelector(".overlay").style.opacity = 1;
+            document.querySelector(".overlay").style.position = "absolute";
+            document.querySelector(".show").style.scale = 1;
+            axios.get(`https://localhost:7091/api/Pizzas/GetPizzaById?id=${activeId}`).then(res => {
+                activePizza = res.data[0];
+                console.log(activePizza);
+                document.querySelector(".show-loading").classList.add = 'd-none';
+            }).catch(function (error) {
+                console.log(error)
+              }).finally(function () {
+                  
+                   const cardContainer = document.createElement('div');
+                    cardContainer.className = 'card-container px-3';
+                    cardContainer.style.position = 'relative';
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body');
+
+                    const cardImage = document.createElement('div');
+                    cardImage.classList.add('card-image');
+                    cardImage.style = 'position: relative; overflow: hidden';
+
+                    const image = document.createElement('img');
+                    image.src = `https://localhost:7091/img/${activePizza.image}`;
+                    image.classList.add("w-100")
+                    image.alt = `${activePizza.name}`;
+
+                    const cardText = document.createElement('div');
+                    cardText.classList.add('card-text');
+
+                    const cardTitle = document.createElement('h3');
+                    cardTitle.classList.add('card-title');
+                    cardTitle.innerHTML = activePizza.name
+
+                    const cardDescription = document.createElement('p');
+                    cardDescription.classList.add('card-description');
+                    cardDescription.innerHTML = activePizza.description.length > 100 ?
+                        `${activePizza.description.substring(0, 100)}...` : `${activePizza.description}`
+
+                    const cardPrice = document.createElement('p');
+                    cardPrice.classList.add('card-price');
+                    cardPrice.innerHTML = `€${activePizza.price}`
+
+                    const delete = document.createElement("button");
+                    delete.innerText = "Elimina";
+                    delete.addEventListener("click", function(){
+                        axios.post(`https://localhost:7091/api/Pizzas/DeleteFromId?id=${activeId}`).then(res => {
+                                window.location.reload();
+                            }).catch(function (error) {
+                                 console.log(error)
+                            })
+                    })
+
+                    cardText.appendChild(cardTitle);
+                    cardText.appendChild(cardDescription);
+                    cardText.appendChild(cardPrice);
+
+                    cardImage.appendChild(image);
+                    cardBody.appendChild(cardImage);
+                    cardBody.appendChild(cardText);
+
+                    cardContainer.appendChild(cardBody);
+
+                    document.querySelector(".show-content").appendChild(cardContainer);
+              });
+
+             
+
+        }
+        function closeShow(){
+            document.querySelector(".overlay").style.opacity = 0;
+            document.querySelector(".overlay").style.position = "relative";
+            document.querySelector(".show").style.scale = 0;
+            document.querySelector(".show-content").innerHTML = "";
+        }
+        function closeForm(){
+            document.querySelector(".overlay-form").style.opacity = 0;
+            document.querySelector(".overlay-form").style.position = "relative";
+            document.querySelector(".form").style.scale = 0;
+        }
+        function openForm() {
+            document.querySelector(".overlay-form").style.opacity = 1;
+            document.querySelector(".overlay-form").style.position = "absolute";
+            document.querySelector(".-form").style.scale = 1;
+        }
+
+        function searchFiltered() {
+            loading.classList.remove("d-none");
+            axios.get(`https://localhost:7091/api/Pizzas/GetAllPizzas?name=${document.getElementById("filter").value}`).then(res => {
+                pizze = res.data;
+                console.log(pizze);
+                changeCards();
+            }).catch(function (error) {
+                console.log(error)
+                document.querySelector(".error").classList.remove("d-none");
+            })
+                .finally(function () {
+                    loading.classList.add("d-none");
+                });
+
+        }
+    </script>
+</body>
